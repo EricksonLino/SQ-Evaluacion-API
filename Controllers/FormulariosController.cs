@@ -65,5 +65,18 @@ namespace SQ_Evaluacion_API.Controllers
             return NoContent();
 
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Eliminar(int id)
+        {
+            var existe = await dbContext.Formularios.AnyAsync(x => x.Id == id);
+            if (!existe)
+            {
+                return NotFound();
+            }
+            dbContext.Formularios.Remove(new Formulario() { Id = id });
+            await dbContext.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
