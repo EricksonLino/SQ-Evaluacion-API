@@ -9,6 +9,9 @@ namespace SQ_Evaluacion_API.Profiles
         public AutoMapperProfile()
         {
             CreateMap<CreacionFormularioDto, Formulario>();
+            CreateMap<Formulario, FormularioDto>();
+            CreateMap<Formulario, DetalleFormularioDto>();
+            CreateMap<EditarFormularioDto, Formulario>();
         }
     }
 }
