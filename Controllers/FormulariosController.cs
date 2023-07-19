@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SQ_Evaluacion_API.Dtos;
@@ -40,21 +39,22 @@ namespace SQ_Evaluacion_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DetalleFormularioDto>> ListarFormularioPorId(int id)
+        public async Task<ActionResult<DetalleFormularioDto>> ObtenerFormularioPorId([FromRoute] int id)
         {
             var formulario = await dbContext.Formularios.FirstOrDefaultAsync(x => x.Id == id);
             if (formulario == null)
             {
                 return NotFound();
             }
+
             var detalleFormularioDto = mapper.Map<DetalleFormularioDto>(formulario);
             return detalleFormularioDto;
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Editar(int id, [FromBody] EditarFormularioDto editarFormularioDto)
+        public async Task<ActionResult> Editar([FromRoute] int id, [FromBody] EditarFormularioDto editarFormularioDto)
         {
-            var formularioModels = await dbContext.Formularios.FirstOrDefaultAsync(x => x.Id==id);
+            var formularioModels = await dbContext.Formularios.FirstOrDefaultAsync(x => x.Id == id);
             if (formularioModels == null)
             {
                 return NotFound();
@@ -63,17 +63,17 @@ namespace SQ_Evaluacion_API.Controllers
             formularioModels = mapper.Map(editarFormularioDto, formularioModels);
             await dbContext.SaveChangesAsync();
             return NoContent();
-
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Eliminar(int id)
+        public async Task<ActionResult> Eliminar([FromRoute] int id)
         {
             var existe = await dbContext.Formularios.AnyAsync(x => x.Id == id);
             if (!existe)
             {
                 return NotFound();
             }
+
             dbContext.Formularios.Remove(new Formulario() { Id = id });
             await dbContext.SaveChangesAsync();
             return NoContent();
