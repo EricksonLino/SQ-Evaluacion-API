@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SQ_Evaluacion_API.Dtos;
@@ -12,11 +13,13 @@ namespace SQ_Evaluacion_API.Controllers
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
+        private readonly DapperDbContext dapperDbContext;
 
-        public FormulariosController(ApplicationDbContext dbContext, IMapper mapper)
+        public FormulariosController(ApplicationDbContext dbContext, IMapper mapper, DapperDbContext dapperDbContext)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
+            this.dapperDbContext = dapperDbContext;
         }
 
         [HttpPost]
@@ -77,6 +80,17 @@ namespace SQ_Evaluacion_API.Controllers
             dbContext.Formularios.Remove(new Formulario() { Id = id });
             await dbContext.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpGet("listarsp")]
+        public async Task<ActionResult<List<FormularioDto>>> ListarSP()
+        {
+            using(var connection = dapperDbContext.CreateConnection())
+            {
+                var formularios = await connection.QueryAsync<Formulario>("SP_Listar_Formularios");
+                var formulariosDto = mapper.Map<List<FormularioDto>>(formularios);
+                return formulariosDto;
+            }
         }
     }
 }

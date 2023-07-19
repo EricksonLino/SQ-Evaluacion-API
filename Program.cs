@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(cfg => cfg.UseSqlServer
                 (builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton<DapperDbContext>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
 builder.Services.AddCors(c => c.AddPolicy("GeneralPolicy", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
