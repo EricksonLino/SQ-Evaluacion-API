@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SQ_Evaluacion_API.Dtos;
 using SQ_Evaluacion_API.Models;
+using System.Data;
 
 namespace SQ_Evaluacion_API.Controllers
 {
@@ -90,6 +91,16 @@ namespace SQ_Evaluacion_API.Controllers
                 var formularios = await connection.QueryAsync<Formulario>("SP_Listar_Formularios");
                 var formulariosDto = mapper.Map<List<FormularioDto>>(formularios);
                 return formulariosDto;
+            }
+        }
+
+        [HttpPost("agregarsp")]
+        public async Task<ActionResult> AgregarSP([FromBody] CreacionFormularioDto creacionFormularioDto)
+        {
+            using(var connection = dapperDbContext.CreateConnection())
+            {
+                var respuesta = await connection.QueryAsync("SP_Agregar_Formulario", creacionFormularioDto, commandType: CommandType.StoredProcedure);
+                return Created("", null);
             }
         }
     }
